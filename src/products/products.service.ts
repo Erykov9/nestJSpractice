@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Product } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
-
 import { PrismaService } from 'src/shared/services/prisma.service';
 
 @Injectable()
@@ -39,6 +37,19 @@ export class ProductsService {
     return this.prismaService.product.update({
       where: { id },
       data: productData,
+    });
+  }
+
+  public getAllExtended(): Promise<Product[]> {
+    return this.prismaService.product.findMany({
+      include: { orders: true },
+    });
+  }
+  
+  public getExtendedById(id: Product['id']): Promise<Product | null> {
+    return this.prismaService.product.findUnique({
+      where: { id },
+      include: { orders: true },
     });
   }
 }
